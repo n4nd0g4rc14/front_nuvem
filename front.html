@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Front-end Supabase</title>
+  <script src="https://cdn.jsdelivr.net/npm/@supabase/supabase-js@1.12.1"></script>
+</head>
+<body>
+  <h1>Cadastro de Produtos</h1>
+  
+  <h2>Consultar Produtos</h2>
+  <button onclick="consultarProdutos()">Consultar</button>
+  <div id="produtosContainer"></div>
+  
+  <h2>Cadastrar Produto</h2>
+  <input type="text" id="nomeInput" placeholder="Nome">
+  <input type="number" id="precoInput" placeholder="Preço">
+  <button onclick="cadastrarProduto()">Cadastrar</button>
+  
+  <h2>Alterar Produto</h2>
+  <input type="number" id="alterarIdInput" placeholder="ID">
+  <input type="text" id="alterarNomeInput" placeholder="Nome">
+  <input type="number" id="alterarPrecoInput" placeholder="Preço">
+  <button onclick="alterarProduto()">Alterar</button>
+  
+  <h2>Deletar Produto</h2>
+  <input type="number" id="deletarIdInput" placeholder="ID">
+  <button onclick="deletarProduto()">Deletar</button>
+
+  <script>
+    const supabaseUrl = 'https://kbylaysxbafpbojdywtj.supabase.co';
+    const supabaseKey = 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJpc3MiOiJzdXBhYmFzZSIsInJlZiI6ImtieWxheXN4YmFmcGJvamR5d3RqIiwicm9sZSI6ImFub24iLCJpYXQiOjE2ODM4NTE1MTgsImV4cCI6MTk5OTQyNzUxOH0.Q_fS53HILFzs08uplWRnVz2VDVw_sOcuh3bp5le2lyg';
+    const supabase = supabase.createClient(supabaseUrl, supabaseKey);
+
+    // Função para consultar os produtos
+    async function consultarProdutos() {
+      const { data: produtos, error } = await supabase.from('produtos').select('*');
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      const produtosContainer = document.getElementById('produtosContainer');
+      produtosContainer.innerHTML = JSON.stringify(produtos);
+    }
+
+    // Função para cadastrar um produto
+    async function cadastrarProduto() {
+      const nome = document.getElementById('nomeInput').value;
+      const preco = document.getElementById('precoInput').value;
+
+      const { data: produto, error } = await supabase.from('produtos').insert({ nome, preco });
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      console.log(produto);
+    }
+
+    // Função para alterar um produto
+    async function alterarProduto() {
+      const id = document.getElementById('alterarIdInput').value;
+      const nome = document.getElementById('alterarNomeInput').value;
+      const preco = document.getElementById('alterarPrecoInput').value;
+
+      const { data: produto, error } = await supabase.from('produtos').update({ nome, preco }).eq('id', id);
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      console.log(produto);
+    }
+
+    // Função para deletar um produto
+    async function deletarProduto() {
+      const id = document.getElementById('deletarIdInput').value;
+
+      const { data: produto, error } = await supabase.from('produtos').delete().eq('id', id);
+      if (error) {
+        console.error(error);
+        return;
+      }
+
+      console.log(produto);
+    }
+  </script>
+</body>
+</html>
